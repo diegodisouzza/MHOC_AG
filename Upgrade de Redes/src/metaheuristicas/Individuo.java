@@ -6,6 +6,11 @@ public class Individuo {
 	private Double custo;
 	private Boolean solucao_elite = false;
 	
+	public Individuo(String id, Double custo) {
+		this.id = id;
+		this.custo = custo;
+	}
+	
 	public String getId() {
 		return id;
 	}

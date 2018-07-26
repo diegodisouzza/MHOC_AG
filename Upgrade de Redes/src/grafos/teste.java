@@ -1,5 +1,7 @@
 package grafos;
 
+import java.util.Random;
+
 public class teste {
 	
 	public static void main(String[] args) {
@@ -23,6 +25,7 @@ public class teste {
 			System.out.println(a.getVertice_1() + " " + a.getVertice_2() + " peso: " + a.getPeso());
 		}
 		System.out.println("Custo: " + g.getCusto());
+
 	}
 
 }

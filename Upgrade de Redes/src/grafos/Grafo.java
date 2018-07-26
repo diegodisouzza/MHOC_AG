@@ -95,6 +95,14 @@ public class Grafo {
 		setCusto(vertice);
 	}
 	
+	public Integer getTotal_vertices() {
+		return total_vertices;
+	}
+
+	public Integer getTotal_arestas() {
+		return total_arestas;
+	}
+
 	public Vertice[] getVertices() {
 		return vertices;
 	}
@@ -110,6 +118,16 @@ public class Grafo {
 	private void setCusto(String vertice) {
 		Integer v = Integer.parseInt(vertice);
 		this.custo = this.custo + vertices[v].getCusto();
+	}
+	
+	public Double getCusto(String id) {
+		String nos [] = id.split("");
+		for(int i = 0; i < nos.length; i++) {
+			if(nos[i] == "1"){
+				upgrade(String.valueOf(i));
+			}
+		}
+		return this.custo;
 	}
 	
 }
