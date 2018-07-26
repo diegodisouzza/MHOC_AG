@@ -49,9 +49,21 @@ public class AlgoritmoGenetico {
 		for (int i = 0; i < this.grafo.getTotal_vertices(); i++) {
 			id = id + new Random().nextInt(2);
 		}
-		Individuo individuo = new Individuo(id, grafo.getCusto(id));
+		Individuo individuo = new Individuo(id, custo_individuo(id));
 		return individuo;
 	}
+	
+	public Double custo_individuo(String id) {
+		Grafo grafo_teste = Grafo.replica(grafo);
+		String nos [] = id.split("");
+		for(int i = 0; i < nos.length; i++) {
+			if(nos[i] == "1"){
+				grafo_teste.upgrade(String.valueOf(i));
+			}
+		}
+		return grafo_teste.getCusto();
+	}
+	
 	
 	public void gerar_novos_individuos() {
 		

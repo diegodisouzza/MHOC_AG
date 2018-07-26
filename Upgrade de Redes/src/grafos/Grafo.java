@@ -115,19 +115,17 @@ public class Grafo {
 		return custo;
 	}
 	
+	public String getArquivo() {
+		return arquivo;
+	}
+
 	private void setCusto(String vertice) {
 		Integer v = Integer.parseInt(vertice);
 		this.custo = this.custo + vertices[v].getCusto();
 	}
 	
-	public Double getCusto(String id) {
-		String nos [] = id.split("");
-		for(int i = 0; i < nos.length; i++) {
-			if(nos[i] == "1"){
-				upgrade(String.valueOf(i));
-			}
-		}
-		return this.custo;
+	public static Grafo replica(Grafo grafo) {
+		return new Grafo(grafo.getArquivo());
 	}
 	
 }
