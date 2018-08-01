@@ -12,11 +12,13 @@ public class AlgoritmoGenetico {
 	private Integer e; //tamanho do vetor de soluções elite
 	private Double limite_custo; //B
 	private Individuo populacao [];
-	private Individuo populacao_acrescida []; // quantos novos individuos serão gerados?
+	private Individuo populacao_n []; // quantos novos individuos serão gerados?
 	private Individuo solucoes_elite []; // quantas soluções elite manteremos para o path relinking?
 	private Double prob_cruzamento = 0.7;
 	private Double prob_mutacao = 0.2;
 	private Integer geracoes_sem_melhoria = 0;
+	private Individuo melhor_solucao_elite = null;
+	private Individuo pior_solucao_elite = null;
 	
 	public AlgoritmoGenetico(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
 		
@@ -25,21 +27,27 @@ public class AlgoritmoGenetico {
 		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
 		gerar_novos_individuos();
+	
 	}
 	
-	public void init(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
+	private void init(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
 		this.grafo = grafo;
 		this.p = tamanho_populacao;
 		this.n = tamanho_populacao / 2;
 		this.e = tamanho_populacao / 2;
 		this.limite_custo = limite_custo;
 		this.populacao = new Individuo[tamanho_populacao];
-		this.populacao_acrescida = new Individuo[n];
+		this.populacao_n = new Individuo[n];
 		this.solucoes_elite = new Individuo[e];
+		this.melhor_solucao_elite = new Individuo("", grafo);
+		this.pior_solucao_elite = new Individuo("", grafo);
+		
+		melhor_solucao_elite.setCusto(Double.MAX_VALUE);
+		pior_solucao_elite.setCusto(Double.MAX_VALUE);
 	}
 	
 
-	public void gerar_populacao_inicial() {
+	private void gerar_populacao_inicial() {
 		Integer individuos_gerados = 0;
 		while(individuos_gerados < p) {
 			Individuo novo_individuo = novo_individuo();
@@ -47,9 +55,11 @@ public class AlgoritmoGenetico {
 				populacao[individuos_gerados++] = novo_individuo;
 			}
 		}
+		
+		primeiro_conj_elite();
 	}
 	
-	public Individuo novo_individuo() {
+	private Individuo novo_individuo() {
 		
 		String id = new String();
 		
@@ -64,7 +74,7 @@ public class AlgoritmoGenetico {
 		return individuo;
 	}
 	
-	public void gerar_novos_individuos() {
+	private void gerar_novos_individuos() {
 		
 		while(geracoes_sem_melhoria <= 10) {
 			
@@ -99,10 +109,14 @@ public class AlgoritmoGenetico {
 					
 				}
 			}
+			
+			atualizar_populacao_p();
+			
+			selecionar_solucoes_elite();
 		}
 	}
 		
-	public Integer cruzamento(Integer novos_individuos) {
+	private Integer cruzamento(Integer novos_individuos) {
 		
 		Integer rand_corte = new Random().nextInt(grafo.getTotal_vertices());
 		Integer rand_pai = new Random().nextInt(p);
@@ -123,20 +137,20 @@ public class AlgoritmoGenetico {
 		
 		if(checar_viabilidade(filho_1)) {
 			
-			populacao_acrescida[novos_individuos++] = filho_1;
+			populacao_n[novos_individuos++] = filho_1;
 		
 		}
 		
 		if(checar_viabilidade(filho_2)) {
 			
-			populacao_acrescida[novos_individuos++] = filho_2;
+			populacao_n[novos_individuos++] = filho_2;
 			
 		}
 		
 		return novos_individuos;
 	}
 	
-	public Integer mutacao(Integer novos_individuos) {
+	private Integer mutacao(Integer novos_individuos) {
 		
 		Integer rand_mutacao = new Random().nextInt(grafo.getTotal_vertices());
 		Integer rand_individuo = new Random().nextInt(p);
@@ -160,7 +174,7 @@ public class AlgoritmoGenetico {
 		
 		if(checar_viabilidade(mutante)) {
 			
-			populacao_acrescida[novos_individuos++] = mutante;
+			populacao_n[novos_individuos++] = mutante;
 			
 		}
 		
@@ -175,4 +189,88 @@ public class AlgoritmoGenetico {
 			return false;
 		}
 	}
+	
+	private void atualizar_populacao_p() {
+		
+		Integer tamanho_roleta = this.p + this.n + 1 - this.e;
+		
+		Integer roleta [][] = new Integer[2][tamanho_roleta];		
+		Individuo populacao_acrescida [] = new Individuo [p+n-e]; // todo mundo menos solucoes_elite (populacao + populacao_n - solucoes_elite)
+		Individuo nova_geracao [] = new Individuo[p];
+				
+		Integer individuos_populacao = 0;
+		Integer individuos_nova_geracao = 0;
+		Double custo_total = 0.0;
+		
+		//insercao dos individuos da solucao_elite na nova_geracao
+		for (int i = 0; i < solucoes_elite.length; i++) {
+			nova_geracao[i] = solucoes_elite[i];
+			individuos_nova_geracao++;
+		}
+		
+		// insercao dos individuos da populacao em populacao_acrescida
+		for (int i = 0; i < populacao.length; i++) {
+			if(!populacao[i].getSolucao_elite()) {
+				populacao_acrescida[individuos_populacao] = populacao[i];
+				populacao_acrescida[individuos_populacao].setSelecionado(false);
+				
+				custo_total = custo_total + populacao[i].getCusto();
+				individuos_populacao++;
+			}
+		}	
+		
+		//insercao dos individuos da populacao_n em populacao_acrescida
+		for (int i = 0; i < populacao_n.length; i++) {
+			populacao_acrescida[individuos_populacao + i] = populacao_n[i];
+			populacao_acrescida[individuos_populacao + i].setSelecionado(false);
+
+			custo_total = custo_total + populacao_n[i].getCusto();
+		}
+		
+		roleta[0][0] = 0;
+		roleta[1][0] = null;
+		
+		// construcao da roleta
+		for (int i = 0; i < populacao_acrescida.length; i++) {
+			roleta[0][i+1] = 100 * (int) (roleta[0][i] + (1 - (populacao_acrescida[i].getCusto() / custo_total)));
+			roleta[1][i+1] = i;
+		}
+		
+		while(individuos_nova_geracao < nova_geracao.length) {
+			Integer rand = new Random().nextInt(100) + 1;
+			
+			for (int i = 0; i < roleta.length-1; i++) {
+				if(roleta[0][i] < rand && rand <= roleta[0][i+1]) {
+					Integer indice_individuo_selecionado = roleta[1][i+1];
+					if(!populacao_acrescida[indice_individuo_selecionado].getSelecionado()) {
+						nova_geracao[individuos_nova_geracao] = populacao_acrescida[indice_individuo_selecionado];
+						populacao_acrescida[indice_individuo_selecionado].setSelecionado(true);
+						continue;
+					}
+				}
+			}
+		}
+		
+		this.populacao = nova_geracao;
+	}
+	
+	private void primeiro_conj_elite() {
+		
+	}
+	
+	private void selecionar_solucoes_elite() {
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

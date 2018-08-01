@@ -7,10 +7,11 @@ public class Individuo {
 	private String id;
 	private Double custo;
 	private Boolean solucao_elite = false;
+	private Boolean selecionado = false;
 	
 	public Individuo(String id, Grafo grafo) {
 		this.id = id;
-		this.custo = setCusto(grafo);
+		setCusto(grafo);
 	}
 	
 	public String getId() {
@@ -32,8 +33,16 @@ public class Individuo {
 	public void setSolucao_elite(Boolean solucao_elite) {
 		this.solucao_elite = solucao_elite;
 	}
-	
-	public Double setCusto(Grafo grafo) {
+		
+	public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+
+	public void setCusto(Grafo grafo) {
 		
 		Grafo grafo_teste = Grafo.replica(grafo);
 		
@@ -48,8 +57,10 @@ public class Individuo {
 		}
 		
 		this.custo = grafo_teste.getCusto();
-		
-		return custo;
+	}
+	
+	public void setCusto(Double custo) {
+		this.custo = custo;
 	}
 	
 	
