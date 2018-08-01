@@ -10,7 +10,7 @@ public class Individuo {
 	
 	public Individuo(String id, Grafo grafo) {
 		this.id = id;
-		this.custo = getCusto(grafo);
+		this.custo = setCusto(grafo);
 	}
 	
 	public String getId() {
@@ -21,8 +21,8 @@ public class Individuo {
 		this.id = id;
 	}
 	
-	public void setCusto(Double custo) {
-		this.custo = custo;
+	public Double getCusto() {
+		return this.custo;
 	}
 	
 	public Boolean getSolucao_elite() {
@@ -33,7 +33,7 @@ public class Individuo {
 		this.solucao_elite = solucao_elite;
 	}
 	
-	public Double getCusto(Grafo grafo) {
+	public Double setCusto(Grafo grafo) {
 		
 		Grafo grafo_teste = Grafo.replica(grafo);
 		
@@ -41,8 +41,7 @@ public class Individuo {
 		
 		for(int i = 0; i < nos.length; i++) {
 			
-			if(nos[i] == "1"){
-				
+			if(nos[i].equals("1")){
 				grafo_teste.upgrade(String.valueOf(i));
 				
 			}

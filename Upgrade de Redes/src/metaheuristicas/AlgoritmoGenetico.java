@@ -7,12 +7,12 @@ import grafos.Grafo;
 public class AlgoritmoGenetico {
 	
 	private Grafo grafo;
-	private Integer tamanho_populacao;
-	private Integer tamanho_nova_geracao;
-	private Integer tamanho_solucoes_elite;
-	private Double limite_custo;
+	private Integer p; //tamanho da população
+	private Integer n; //número de individuos gerados por cruzamento+mutação
+	private Integer e; //tamanho do vetor de soluções elite
+	private Double limite_custo; //B
 	private Individuo populacao [];
-	private Individuo nova_geracao []; // quantos novos individuos serão gerados?
+	private Individuo populacao_acrescida []; // quantos novos individuos serão gerados?
 	private Individuo solucoes_elite []; // quantas soluções elite manteremos para o path relinking?
 	private Double prob_cruzamento = 0.7;
 	private Double prob_mutacao = 0.2;
@@ -22,26 +22,26 @@ public class AlgoritmoGenetico {
 		
 		init(grafo, tamanho_populacao, limite_custo);
 		
-		gerar_populacao_inicial();
+		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
 		gerar_novos_individuos();
 	}
 	
 	public void init(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
 		this.grafo = grafo;
-		this.tamanho_populacao = tamanho_populacao;
-		this.tamanho_nova_geracao = tamanho_populacao / 2;
-		this.tamanho_solucoes_elite = tamanho_populacao / 2;
+		this.p = tamanho_populacao;
+		this.n = tamanho_populacao / 2;
+		this.e = tamanho_populacao / 2;
 		this.limite_custo = limite_custo;
 		this.populacao = new Individuo[tamanho_populacao];
-		this.nova_geracao = new Individuo[tamanho_nova_geracao];
-		this.solucoes_elite = new Individuo[tamanho_solucoes_elite];
+		this.populacao_acrescida = new Individuo[n];
+		this.solucoes_elite = new Individuo[e];
 	}
 	
 
 	public void gerar_populacao_inicial() {
 		Integer individuos_gerados = 0;
-		while(individuos_gerados < tamanho_populacao) {
+		while(individuos_gerados < p) {
 			Individuo novo_individuo = novo_individuo();
 			if(checar_viabilidade(novo_individuo)) {
 				populacao[individuos_gerados++] = novo_individuo;
@@ -70,7 +70,7 @@ public class AlgoritmoGenetico {
 			
 			Integer novos_individuos = 0;
 			
-			while(novos_individuos < this.tamanho_populacao/2) {
+			while(novos_individuos < this.n) {
 				
 				Double rand_cruzamentos = Math.random();
 				Double rand_mutacao = Math.random();
@@ -105,12 +105,11 @@ public class AlgoritmoGenetico {
 	public Integer cruzamento(Integer novos_individuos) {
 		
 		Integer rand_corte = new Random().nextInt(grafo.getTotal_vertices());
-		Integer rand_pai = new Random().nextInt(tamanho_populacao);
-		Integer rand_mae = new Random().nextInt(tamanho_populacao);
+		Integer rand_pai = new Random().nextInt(p);
+		Integer rand_mae = new Random().nextInt(p);
 		
 		while (rand_pai == rand_mae) {
-			rand_pai = new Random().nextInt(tamanho_populacao);
-			rand_mae = new Random().nextInt(tamanho_populacao);
+			rand_pai = new Random().nextInt(p);
 		}
 		
 		Individuo pai = populacao[rand_pai];
@@ -124,13 +123,13 @@ public class AlgoritmoGenetico {
 		
 		if(checar_viabilidade(filho_1)) {
 			
-			nova_geracao[novos_individuos++] = filho_1;
+			populacao_acrescida[novos_individuos++] = filho_1;
 		
 		}
 		
 		if(checar_viabilidade(filho_2)) {
 			
-			nova_geracao[novos_individuos++] = filho_2;
+			populacao_acrescida[novos_individuos++] = filho_2;
 			
 		}
 		
@@ -140,7 +139,7 @@ public class AlgoritmoGenetico {
 	public Integer mutacao(Integer novos_individuos) {
 		
 		Integer rand_mutacao = new Random().nextInt(grafo.getTotal_vertices());
-		Integer rand_individuo = new Random().nextInt(tamanho_populacao);
+		Integer rand_individuo = new Random().nextInt(p);
 		
 		Individuo individuo = populacao[rand_individuo];
 		
@@ -161,7 +160,7 @@ public class AlgoritmoGenetico {
 		
 		if(checar_viabilidade(mutante)) {
 			
-			nova_geracao[novos_individuos++] = mutante;
+			populacao_acrescida[novos_individuos++] = mutante;
 			
 		}
 		
@@ -169,7 +168,7 @@ public class AlgoritmoGenetico {
 	}
 	
 	private Boolean checar_viabilidade(Individuo individuo) { // é preciso avaliar as demais restrições do problema
-		if(individuo.getCusto(grafo) <= this.limite_custo) {
+		if(individuo.getCusto() <= this.limite_custo) {
 			return true;
 		}
 		else {
