@@ -13,32 +13,61 @@ public class AlgoritmoGenetico {
 	private Double limite_custo; //B
 	private Individuo populacao [];
 	private Individuo populacao_n []; // quantos novos individuos serão gerados?
-	private Individuo solucoes_elite []; // quantas soluções elite manteremos para o path relinking?
+	private Integer solucoes_elite []; // quantas soluções elite manteremos para o path relinking?
 	private Double prob_cruzamento = 0.7;
 	private Double prob_mutacao = 0.2;
 	private Integer geracoes_sem_melhoria = 0;
 	private Individuo melhor_solucao_elite = null;
 	private Individuo pior_solucao_elite = null;
 	
-	public AlgoritmoGenetico(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
+	public AlgoritmoGenetico(Grafo grafo, Double limite_custo) {
 		
-		init(grafo, tamanho_populacao, limite_custo);
+		init(grafo, limite_custo);
 		
 		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
-		gerar_novos_individuos();
+		while(geracoes_sem_melhoria < 10) {
+			gerar_novos_individuos();
+		}
 	
 	}
 	
-	private void init(Grafo grafo, Integer tamanho_populacao, Double limite_custo) {
+	public AlgoritmoGenetico(Grafo grafo, Double limite_custo, String id_individuo_otimo) {
+		
+		init(grafo, limite_custo);
+		
+		gerar_populacao_inicial(); // podemos fazer um método guloso
+		
+		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo)) {
+			gerar_novos_individuos();
+		}
+		
+	}
+	
+	private void init(Grafo grafo, Double limite_custo) {
 		this.grafo = grafo;
-		this.p = tamanho_populacao;
-		this.n = tamanho_populacao / 2;
-		this.e = tamanho_populacao / 2;
+		
+		if(this.grafo.getTotal_vertices() >= 10) { // limita o tamanho da populacao a 100 caso o numero de vertices seja maior que 10
+			this.p = 100;
+		}
+		else { // calcula o tamanho da populacao em funcao do numero de vertices
+			Double num_vertices = Double.parseDouble(String.valueOf(this.grafo.getTotal_vertices()));
+			this.p = (int) Math.pow(2.0, num_vertices) / this.grafo.getTotal_vertices(); // p = (2^total_vertices)/total_vertices
+		}
+		
+		this.n = this.p / 2;
+		
+		if(this.p < 20) { // garante que e seja pelo menos igual a 2
+			this.e = 2;
+		}
+		else { // calcula o tamanho do conj de solucoes elite em funcao do tamanho da populacao
+			this.e = (int) (this.p * 0.1);
+		}
+		
 		this.limite_custo = limite_custo;
-		this.populacao = new Individuo[tamanho_populacao];
+		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[n];
-		this.solucoes_elite = new Individuo[e];
+		this.solucoes_elite = new Integer[e];
 		this.melhor_solucao_elite = new Individuo("", grafo);
 		this.pior_solucao_elite = new Individuo("", grafo);
 		
@@ -76,44 +105,41 @@ public class AlgoritmoGenetico {
 	
 	private void gerar_novos_individuos() {
 		
-		while(geracoes_sem_melhoria <= 10) {
+		Integer novos_individuos = 0;
 			
-			Integer novos_individuos = 0;
-			
-			while(novos_individuos < this.n) {
+		while(novos_individuos < this.n) {
 				
-				Double rand_cruzamentos = Math.random();
-				Double rand_mutacao = Math.random();
+			Double rand_cruzamentos = Math.random();
+			Double rand_mutacao = Math.random();
 				
-				if(rand_cruzamentos <= prob_cruzamento) {
+			if(rand_cruzamentos <= prob_cruzamento) {
 					
-					try {
+				try {
 						
-						novos_individuos = cruzamento(novos_individuos);
+					novos_individuos = cruzamento(novos_individuos);
 						
-					} catch (ArrayIndexOutOfBoundsException e) {
-						System.out.println("Quantidade de indivivuos gerados por cruzamento excede limite");
-					}
-					
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Quantidade de indivivuos gerados por cruzamento excede limite");
 				}
-				
-				if(rand_mutacao <= prob_mutacao) {
 					
-					try {
-						
-						novos_individuos = mutacao(novos_individuos);
-						
-					} catch (ArrayIndexOutOfBoundsException e) {
-						System.out.println("Quantidade de indivivuos gerados por mutação excede limite");
-					}
-					
-				}
 			}
-			
-			atualizar_populacao_p();
-			
-			selecionar_solucoes_elite();
+				
+			if(rand_mutacao <= prob_mutacao) {
+					
+				try {
+						
+					novos_individuos = mutacao(novos_individuos);
+						
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.out.println("Quantidade de indivivuos gerados por mutação excede limite");
+				}
+					
+			}
 		}
+			
+		atualizar_populacao_p();
+			
+		selecionar_solucoes_elite();
 	}
 		
 	private Integer cruzamento(Integer novos_individuos) {
@@ -204,7 +230,7 @@ public class AlgoritmoGenetico {
 		
 		//insercao dos individuos da solucao_elite na nova_geracao
 		for (int i = 0; i < solucoes_elite.length; i++) {
-			nova_geracao[i] = solucoes_elite[i];
+			nova_geracao[i] = populacao[solucoes_elite[i]];
 			individuos_nova_geracao++;
 		}
 		
@@ -256,14 +282,144 @@ public class AlgoritmoGenetico {
 	
 	private void primeiro_conj_elite() {
 		
+		ordena_populacao(populacao,0,this.p-1);
+		
+		for (int i = 0; i < this.e; i++) {
+			solucoes_elite[i] = i; // solucoes_elite armazena as primeiras posicoes de populacao
+			populacao[i].setSolucao_elite(true);
+		}
+		
+		this.melhor_solucao_elite = populacao[this.solucoes_elite[0]];
+		this.pior_solucao_elite = populacao[this.solucoes_elite[e-1]];
 	}
 	
 	private void selecionar_solucoes_elite() {
 		
-		
+		for (int i = 0; i < populacao.length; i++) {
+			if(!populacao[i].getSolucao_elite() && populacao[i].getCusto() < this.melhor_solucao_elite.getCusto()) {
+				populacao[solucoes_elite[e-1]].setSolucao_elite(false);
+				solucoes_elite[e-1] = i;
+				populacao[i].setSolucao_elite(true);
+				ordena_solucoes_elite(solucoes_elite, 0, e-1);
+			}
+			else if(!populacao[i].getSolucao_elite() && populacao[i].getCusto() < this.pior_solucao_elite.getCusto()) {
+				if(checar_diferenca(populacao[i])) {
+					populacao[solucoes_elite[e-1]].setSolucao_elite(false);
+					solucoes_elite[e-1] = i;
+					populacao[i].setSolucao_elite(true);
+					ordena_solucoes_elite(solucoes_elite, 0, e-1);
+				}
+			}
+		}
 	}
 	
+	private void ordena_populacao(Individuo populacao[], Integer primeira_posicao, Integer ultima_posicao) {
 	
+		if(primeira_posicao != ultima_posicao) {
+			Integer posicao_media = primeira_posicao + ultima_posicao / 2;
+			ordena_populacao(populacao, primeira_posicao, posicao_media);
+			ordena_populacao(populacao,posicao_media+1,ultima_posicao);
+			
+			Integer tam_conj_aux_1 = posicao_media - primeira_posicao + 1;
+			Integer tam_conj_aux_2 = ultima_posicao - posicao_media;
+			
+			Individuo conj_aux_1[] = new Individuo[tam_conj_aux_1];
+			Individuo conj_aux_2[] = new Individuo[tam_conj_aux_2];
+			
+			for (int i = 0; i < conj_aux_1.length; i++) {
+				conj_aux_1[i] = populacao[primeira_posicao + i];
+			}
+			for (int i = 0; i < conj_aux_2.length; i++) {
+				conj_aux_2[i] = populacao[posicao_media + i + 1];
+			}
+			
+			Integer i = 0;
+			Integer j = 0;
+			
+			for (int k = primeira_posicao; k < ultima_posicao; k++) {
+				if(conj_aux_1[i].getCusto() <= conj_aux_2[j].getCusto()) {
+					populacao[k] = conj_aux_1[i];
+					i++;
+				}
+				else {
+					populacao[k] = conj_aux_2[j];
+					j++;
+				}
+			}
+		}
+	}
+		
+	private void ordena_solucoes_elite(Integer solucoes_elite[], Integer primeira_posicao, Integer ultima_posicao) {
+		if(primeira_posicao != ultima_posicao) {
+			Integer posicao_media = primeira_posicao + ultima_posicao / 2;
+			ordena_solucoes_elite(solucoes_elite, primeira_posicao, posicao_media);
+			ordena_solucoes_elite(solucoes_elite,posicao_media+1,ultima_posicao);
+				
+			Integer tam_conj_aux_1 = posicao_media - primeira_posicao + 1;
+			Integer tam_conj_aux_2 = ultima_posicao - posicao_media;
+				
+			Integer conj_aux_1[] = new Integer[tam_conj_aux_1];
+			Integer conj_aux_2[] = new Integer[tam_conj_aux_2];
+			
+			for (int i = 0; i < conj_aux_1.length; i++) {
+				conj_aux_1[i] = solucoes_elite[primeira_posicao + i];
+			}
+			for (int i = 0; i < conj_aux_2.length; i++) {
+				conj_aux_2[i] = solucoes_elite[posicao_media + i + 1];
+			}
+			
+			Integer i = 0;
+			Integer j = 0;
+				
+			for (int l = primeira_posicao; l < ultima_posicao; l++) {
+				if(populacao[conj_aux_1[i]].getCusto() <= populacao[conj_aux_2[j]].getCusto()) {
+					solucoes_elite[l] = conj_aux_1[i];
+					i++;
+				}
+				else {
+					solucoes_elite[l] = conj_aux_2[j];
+					j++;
+				}
+			}
+		}
+	}
+	
+	private Boolean checar_diferenca(Individuo individuo) {
+		Integer diferenca = 0;
+		String[] id_aux= individuo.getId().split("");
+		Integer comparacao[] = new Integer[grafo.getTotal_vertices()];
+		
+		for (int i = 0; i < solucoes_elite.length; i++) {
+			for (int j = 0; j < grafo.getTotal_vertices(); j++) {
+				comparacao[j] = comparacao[j] + Integer.parseInt(populacao[solucoes_elite[i]].getId().split("")[j]);
+			}
+		}
+		
+		for (int i = 0; i < comparacao.length; i++) {
+			
+			if(comparacao[i] <= this.e/3) {
+				comparacao[i] = 0;
+			}
+			else if(comparacao[i] >= 2*this.e/3) {
+				comparacao[i] = 1;
+			}
+			else
+				comparacao[i] = Integer.MAX_VALUE;
+		}
+		
+		for (int i = 0; i < comparacao.length; i++) {			
+			if(comparacao[i] != Integer.MAX_VALUE && !id_aux.equals(String.valueOf(comparacao[i]))) {
+				diferenca++;
+			}
+		}
+		
+		if(diferenca > grafo.getTotal_vertices()/2) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	
 	
