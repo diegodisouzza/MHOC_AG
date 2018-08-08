@@ -45,7 +45,7 @@ public class FuncoesAuxiliares {
 			mergeSort_solucoes_elite(solucoes_elite, populacao, inicio, meio);
 			mergeSort_solucoes_elite(solucoes_elite, populacao, meio+1, fim);
 			merge_solucoes_elite(solucoes_elite, populacao, inicio, meio, fim);
-		}	
+		}
 	}
 	
 	private static void merge_solucoes_elite(Integer solucoes_elite[], Individuo populacao[], Integer inicio, Integer meio, Integer fim){

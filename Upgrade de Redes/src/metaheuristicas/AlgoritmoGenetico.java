@@ -344,7 +344,7 @@ public class AlgoritmoGenetico {
 	private void selecionar_solucoes_elite() {
 		
 		System.out.println("Atualizando soluções elite...");
-		
+				
 		for (int i = 0; i < populacao.length; i++) {
 			if(!populacao[i].getSolucao_elite() && populacao[i].getCusto() < this.melhor_solucao_elite.getCusto()) {
 				populacao[solucoes_elite[e-1]].setSolucao_elite(false);
@@ -429,7 +429,6 @@ public class AlgoritmoGenetico {
 			return false;
 		}
 	}
-	
 	
 	
 	
