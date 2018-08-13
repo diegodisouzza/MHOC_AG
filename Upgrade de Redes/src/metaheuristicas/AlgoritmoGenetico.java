@@ -24,21 +24,27 @@ public class AlgoritmoGenetico {
 	private Double prob_cruzamento = 0.7;
 	private Double prob_mutacao = 0.2;
 	private Integer geracoes_sem_melhoria = 0;
+	private final Integer NUM_MAX_GERACOES = 500;
 	private Individuo melhor_solucao_elite = null;
 	private Individuo pior_solucao_elite = null;
+	private Integer num_cruzamentos = 0, num_mutacoes = 0;
 	
 	public AlgoritmoGenetico(Grafo grafo, Double limite_custo) {
 		
 		System.out.println("Executando GANU... \nCritério de parada: nº de iterações em melhoria \n");
 		
 		init(grafo, limite_custo);
+		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
+		Double tempo_anterior = (double) System.currentTimeMillis()/1000;
+		Double tempo_atual;
+		Double intervalo;
 		
-		gerar_populacao_inicial(); // podemos fazer um método guloso
+		gerar_populacao_inicial();
 		
 		while(geracoes_sem_melhoria < 10) {
-
+			
 			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
 			gerar_novos_individuos(num_geracoes);
@@ -47,8 +53,18 @@ public class AlgoritmoGenetico {
 							
 			selecionar_solucoes_elite();
 			
+			tempo_atual = (double) System.currentTimeMillis()/1000;
+			intervalo = tempo_atual-tempo_anterior;
+			tempo_anterior = tempo_atual;
+			
+			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
+			
 		}
-		System.out.println("Número de gerações: " + num_geracoes);
+		
+		FuncoesAuxiliares.escrever_saida();
+		
+		System.out.println("Número de gerações: "+num_geracoes+", melhor solução encontrada "+this.melhor_solucao_elite.getId() 
+			+ " delay: "+this.melhor_solucao_elite.getDelay()+" custo: "+this.melhor_solucao_elite.getCusto());
 	
 	}
 	
@@ -57,12 +73,16 @@ public class AlgoritmoGenetico {
 		System.out.println("Executando GANU... \nCritério de parada: ótimo conhecido ("+id_individuo_otimo+") \n");
 		
 		init(grafo, limite_custo);
+		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
+		Double tempo_anterior = (double) System.currentTimeMillis()/1000;
+		Double tempo_atual;
+		Double intervalo;
 		
 		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
-		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo)) {
+		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo) && num_geracoes < NUM_MAX_GERACOES) {
 			
 			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
@@ -72,8 +92,17 @@ public class AlgoritmoGenetico {
 							
 			selecionar_solucoes_elite();
 			
+			tempo_atual = (double) System.currentTimeMillis()/1000;
+			intervalo = tempo_atual-tempo_anterior;
+			tempo_anterior = tempo_atual;
+			
+			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
 		}
-		System.out.println("Número de gerações: " + num_geracoes);
+		
+		FuncoesAuxiliares.escrever_saida();
+		
+		System.out.println("Número de gerações: "+num_geracoes+", melhor solução encontrada "+this.melhor_solucao_elite.getId() 
+		+ " delay: "+this.melhor_solucao_elite.getDelay()+" custo: "+this.melhor_solucao_elite.getCusto());
 		
 	}
 	
@@ -170,7 +199,8 @@ public class AlgoritmoGenetico {
 		
 		Integer novos_individuos = 0;
 		
-		Integer num_cruzamentos = 0, num_mutacoes = 0;
+		num_cruzamentos = 0;
+		num_mutacoes = 0;
 		
 		System.out.println("[Novos individuos] a serem gerados (populacao_n): "+this.n);
 			
@@ -365,7 +395,7 @@ public class AlgoritmoGenetico {
 		System.out.println("Atualizando soluções elite...");
 		System.out.println("Conjunto de soluções elite atual: "+imprime_solucoes_elite());
 		
-		Boolean substituicao = false;
+		Boolean melhoria = false;
 		
 		atualiza_melhor_pior_solucao_elite();
 				
@@ -385,7 +415,9 @@ public class AlgoritmoGenetico {
 					substituir_solucao_elite(i);
 					atualiza_melhor_pior_solucao_elite();
 					
-					substituicao = true;
+					geracoes_sem_melhoria = 0;
+					
+					melhoria = true;
 				}
 				// se delay do individuo for menor que da pior solucao ou se forem iguais, mas apresentar menor custo
 				else if(populacao[i].getDelay() < this.pior_solucao_elite.getDelay()
@@ -400,17 +432,19 @@ public class AlgoritmoGenetico {
 						substituir_solucao_elite(i);
 						atualiza_melhor_pior_solucao_elite();
 						
-						substituicao = true;
+						geracoes_sem_melhoria = 0;
+						
+						melhoria = true;
 					}
-				}
-				else {
-					geracoes_sem_melhoria++;
 				}
 			}
 		}
 		
-		if(substituicao) {
+		if(melhoria) {
 			System.out.println("Novo conjunto de soluções elite: "+imprime_solucoes_elite());
+		}
+		else {
+			geracoes_sem_melhoria++;
 		}
 	}
 	

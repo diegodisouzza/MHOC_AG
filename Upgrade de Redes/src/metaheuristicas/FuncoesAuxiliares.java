@@ -1,5 +1,9 @@
 package metaheuristicas;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
  * Universidade Federal do Rio de Janeiro - COPPE - PESC
  * Metaheuristicas em Otimização Combinatória 2018.2
@@ -9,6 +13,24 @@ package metaheuristicas;
 
 
 public class FuncoesAuxiliares {
+	
+	private static FileWriter fw;
+	private static BufferedWriter bw;
+	private static String conteudo;
+	private static Integer rodada = 0;
+	
+	public static void init(String caminho) {
+		rodada++;
+		String arquivo = caminho.replace(".in", " - solucao "+rodada+".txt");
+		try{
+			fw = new FileWriter(arquivo);
+			bw = new BufferedWriter(fw);
+		}
+		catch(IOException e) {
+			System.out.println("Erro na abertura do arquivo de saída");
+		}
+		conteudo = "geracao cruzamentos mutacoes populacao populacao_n solucoes_elite melhoria melhor_delay melhor_custo tempo\n";
+	}
 
 	public static void mergeSort_populacao(Individuo populacao[], int inicio, int fim){
 		if(inicio < fim){
@@ -103,6 +125,21 @@ public class FuncoesAuxiliares {
 		int restante = meio - esquerda;
 		for (int i = 0; i <= restante; i++) {
 			solucoes_elite[atual+i] = auxiliar[esquerda+ i];
+		}
+	}
+	
+	public static void conteudo_saida(Integer geracao, Integer cruzamentos, Integer mutacoes, Integer populacao, Integer populacao_n, Integer solucoes_elite, 
+			String melhor_solucao, Double melhor_delay, Double melhor_custo, Double tempo){
+		conteudo = conteudo + geracao +" "+cruzamentos+" "+mutacoes+" "+populacao+" "+populacao_n+"	"+solucoes_elite+" "
+			+melhor_solucao+" "+melhor_delay+" "+melhor_custo+" "+tempo +"\n"; 		
+	}
+	
+	public static void escrever_saida() {
+		try {
+			bw.write(conteudo);
+			bw.flush();
+		} catch (IOException e) {
+			System.out.println("Erro na escrita do arquivo de saída");
 		}
 	}
 }
