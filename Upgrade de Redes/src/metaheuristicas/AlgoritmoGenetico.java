@@ -33,13 +33,13 @@ public class AlgoritmoGenetico {
 		
 		init(grafo, limite_custo);
 		
-		Integer num_geracoes = 1;
+		Integer num_geracoes = 0;
 		
 		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
 		while(geracoes_sem_melhoria < 10) {
 
-			System.out.println("\nGeração corrente: " + num_geracoes + "\n");
+			System.out.println("\nGeração corrente: " + num_geracoes++ + "\n");
 			
 			gerar_novos_individuos(num_geracoes);
 				
@@ -48,7 +48,7 @@ public class AlgoritmoGenetico {
 			selecionar_solucoes_elite();
 			
 		}
-		System.out.println("Número de gerações: " + num_geracoes++);
+		System.out.println("Número de gerações: " + num_geracoes);
 	
 	}
 	
@@ -58,13 +58,13 @@ public class AlgoritmoGenetico {
 		
 		init(grafo, limite_custo);
 		
-		Integer num_geracoes = 1;
+		Integer num_geracoes = 0;
 		
 		gerar_populacao_inicial(); // podemos fazer um método guloso
 		
 		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo)) {
 			
-			System.out.println("\nGeração corrente: " + num_geracoes + "\n");
+			System.out.println("\nGeração corrente: " + num_geracoes++ + "\n");
 			
 			gerar_novos_individuos(num_geracoes);
 				
@@ -73,7 +73,7 @@ public class AlgoritmoGenetico {
 			selecionar_solucoes_elite();
 			
 		}
-		System.out.println("Número de gerações: " + num_geracoes++);
+		System.out.println("Número de gerações: " + num_geracoes);
 		
 	}
 	
