@@ -1,9 +1,6 @@
 package metaheuristicas;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.TreeMap;
 
 import grafos.Aresta;
