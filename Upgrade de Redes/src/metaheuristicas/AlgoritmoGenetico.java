@@ -39,7 +39,7 @@ public class AlgoritmoGenetico {
 		
 		while(geracoes_sem_melhoria < 10) {
 
-			System.out.println("\nGeração corrente: " + num_geracoes++ + "\n");
+			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
 			gerar_novos_individuos(num_geracoes);
 				
@@ -64,7 +64,7 @@ public class AlgoritmoGenetico {
 		
 		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo)) {
 			
-			System.out.println("\nGeração corrente: " + num_geracoes++ + "\n");
+			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
 			gerar_novos_individuos(num_geracoes);
 				
