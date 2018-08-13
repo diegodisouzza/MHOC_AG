@@ -68,12 +68,11 @@ public class Individuo {
 		TreeMap<Double, Aresta> fila_arestas = new TreeMap<Double,Aresta>();
 		
 		for (Aresta aresta : grafo.getArestas()) {
-			if(fila_arestas.containsKey(aresta.getPeso())) {
-				fila_arestas.put(aresta.getPeso()+0.1, aresta);
-			}
-			else {
-				fila_arestas.put(aresta.getPeso(), aresta);
-			}
+			Double prioridade = aresta.getPeso();
+			while(fila_arestas.containsKey(prioridade)) {
+				prioridade = prioridade+0.1;
+			}			
+			fila_arestas.put(prioridade, aresta);
 		}
 		
 		Integer num_arestas = 0;
