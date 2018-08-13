@@ -1,5 +1,12 @@
 package grafos;
 
+/**
+ * Universidade Federal do Rio de Janeiro - COPPE - PESC
+ * Metaheuristicas em Otimização Combinatória 2018.2
+ * Alunos: Cláudio Diego Souza, Caroline Lima, Waldomiro Sinico
+ * GANU: um Algoritmo Genético para o problema de Upgrade de Redes
+ * */
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 

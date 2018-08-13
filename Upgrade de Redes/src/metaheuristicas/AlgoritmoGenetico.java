@@ -1,5 +1,12 @@
 package metaheuristicas;
 
+/**
+ * Universidade Federal do Rio de Janeiro - COPPE - PESC
+ * Metaheuristicas em Otimização Combinatória 2018.2
+ * Alunos: Cláudio Diego Souza, Caroline Lima, Waldomiro Sinico
+ * GANU: um Algoritmo Genético para o problema de Upgrade de Redes
+ * */
+
 import java.util.Random;
 
 import grafos.Grafo;
@@ -34,14 +41,14 @@ public class AlgoritmoGenetico {
 
 			System.out.println("\nGeração corrente: " + num_geracoes + "\n");
 			
-			gerar_novos_individuos(num_geracoes++);
+			gerar_novos_individuos(num_geracoes);
 				
 			atualizar_populacao_p();
 							
 			selecionar_solucoes_elite();
 			
 		}
-		System.out.println("Número de gerações: " + num_geracoes);
+		System.out.println("Número de gerações: " + num_geracoes++);
 	
 	}
 	
@@ -59,14 +66,14 @@ public class AlgoritmoGenetico {
 			
 			System.out.println("\nGeração corrente: " + num_geracoes + "\n");
 			
-			gerar_novos_individuos(num_geracoes++);
+			gerar_novos_individuos(num_geracoes);
 				
 			atualizar_populacao_p();
 							
 			selecionar_solucoes_elite();
 			
 		}
-		System.out.println("Número de gerações: " + num_geracoes);
+		System.out.println("Número de gerações: " + num_geracoes++);
 		
 	}
 	
@@ -291,7 +298,7 @@ public class AlgoritmoGenetico {
 		System.out.println("Atualizando população...");
 		System.out.println("População: "+imprime_populacao_generica(populacao)+" + População N: "+imprime_populacao_generica(populacao_n));
 		
-		Individuo populacao_acrescida [] = new Individuo [p+n]; // todo mundo menos solucoes_elite (populacao + populacao_n - solucoes_elite)
+		Individuo populacao_acrescida [] = new Individuo [p+n];
 		Individuo nova_geracao [] = new Individuo[p];
 				
 		Integer individuos_populacao = 0;
@@ -321,7 +328,8 @@ public class AlgoritmoGenetico {
 
 		System.out.println("Iniciando sorteio de indivíduos...");
 		System.out.println("Candidatos: "+imprime_populacao_generica(populacao_acrescida));
-
+		
+		//selecao dos individuos de populacao_acrescida por meio de sorteio
 		while(individuos_nova_geracao < nova_geracao.length) {
 			Integer rand_1 = new Random().nextInt(populacao_acrescida.length);
 			Integer rand_2 = new Random().nextInt(populacao_acrescida.length);
@@ -330,7 +338,7 @@ public class AlgoritmoGenetico {
 				rand_1 = new Random().nextInt(populacao_acrescida.length);
 			}
 			
-			if(populacao_acrescida[rand_1].getCusto() < populacao_acrescida[rand_2].getCusto()) {
+			if(populacao_acrescida[rand_1].getDelay() < populacao_acrescida[rand_2].getDelay()) {
 				if(!populacao_acrescida[rand_1].getSolucao_elite() && !populacao_acrescida[rand_1].getSelecionado()) {
 					nova_geracao[individuos_nova_geracao] = populacao_acrescida[rand_1];
 					populacao_acrescida[rand_1].setSelecionado(true);
@@ -352,10 +360,12 @@ public class AlgoritmoGenetico {
 		System.out.println("Nova população: "+imprime_populacao_generica(populacao));
 	}
 		
-	private void selecionar_solucoes_elite() {
+	private void selecionar_solucoes_elite() { // [melhorar] a selecao precisa levar em conta o menor delay mas tambem o menor custo
 		
 		System.out.println("Atualizando soluções elite...");
 		System.out.println("Conjunto de soluções elite atual: "+imprime_solucoes_elite());
+		
+		Boolean substituicao = false;
 		
 		atualiza_melhor_pior_solucao_elite();
 				
@@ -364,15 +374,23 @@ public class AlgoritmoGenetico {
 			if(!populacao[i].getSolucao_elite() && !populacao[i].getId().equals(this.melhor_solucao_elite.getId())
 				&& !populacao[i].getId().equals(this.pior_solucao_elite.getId())) {
 				
-				if(populacao[i].getCusto() < this.melhor_solucao_elite.getCusto()) {
+				// se delay do individuo for menor que da melhor solucao ou se forem iguais, mas apresentar menor custo
+				if(populacao[i].getDelay() < this.melhor_solucao_elite.getDelay() 
+						|| (populacao[i].getDelay() == this.melhor_solucao_elite.getDelay() 
+						&& populacao[i].getCusto() < this.melhor_solucao_elite.getCusto())) {
 					
 					System.out.println("[Melhor que melhor] "+populacao[i].getId()+" melhor que "+this.melhor_solucao_elite.getId()
 					+" | removida pior solução elite: "+populacao[solucoes_elite[e-1]].getId());
 					
 					substituir_solucao_elite(i);
 					atualiza_melhor_pior_solucao_elite();
+					
+					substituicao = true;
 				}
-				else if(populacao[i].getCusto() < this.pior_solucao_elite.getCusto()) {
+				// se delay do individuo for menor que da pior solucao ou se forem iguais, mas apresentar menor custo
+				else if(populacao[i].getDelay() < this.pior_solucao_elite.getDelay()
+						|| (populacao[i].getDelay() == this.pior_solucao_elite.getDelay())
+						&& populacao[i].getCusto() < this.pior_solucao_elite.getCusto()) {
 					
 					if(checar_diferenca(populacao[i])) {
 						
@@ -381,12 +399,18 @@ public class AlgoritmoGenetico {
 						
 						substituir_solucao_elite(i);
 						atualiza_melhor_pior_solucao_elite();
+						
+						substituicao = true;
 					}
 				}
 				else {
 					geracoes_sem_melhoria++;
 				}
 			}
+		}
+		
+		if(substituicao) {
+			System.out.println("Novo conjunto de soluções elite: "+imprime_solucoes_elite());
 		}
 	}
 	

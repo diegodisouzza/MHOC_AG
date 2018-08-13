@@ -1,5 +1,13 @@
 package metaheuristicas;
 
+/**
+ * Universidade Federal do Rio de Janeiro - COPPE - PESC
+ * Metaheuristicas em Otimização Combinatória 2018.2
+ * Alunos: Cláudio Diego Souza, Caroline Lima, Waldomiro Sinico
+ * GANU: um Algoritmo Genético para o problema de Upgrade de Redes
+ * */
+
+
 public class FuncoesAuxiliares {
 
 	public static void mergeSort_populacao(Individuo populacao[], int inicio, int fim){
@@ -22,15 +30,26 @@ public class FuncoesAuxiliares {
 		int atual = inicio;
 		
 		while (esquerda <= meio && direita <=fim) {
-			if(auxiliar[esquerda].getCusto() <= auxiliar[direita].getCusto()){
+			if(auxiliar[esquerda].getDelay() < auxiliar[direita].getDelay()){
 				populacao[atual] = auxiliar[esquerda];
 				esquerda++;
 				
-			}else{
+			}
+			else if(auxiliar[direita].getDelay() < auxiliar[esquerda].getDelay()){
 				populacao[atual] = auxiliar[direita];
 				direita++;
 			}
-			atual ++;		
+			else { // se os delays forem iguais, ordena por menor custo
+				if(auxiliar[esquerda].getCusto() < auxiliar[direita].getCusto()) {
+					populacao[atual] = auxiliar[esquerda];
+					esquerda++;
+				}
+				else {
+					populacao[atual] = auxiliar[direita];
+					direita++;
+				}
+			}
+			atual++;		
 		}
 		
 		int restante = meio - esquerda;
@@ -58,16 +77,27 @@ public class FuncoesAuxiliares {
 		int direita = meio+1;
 		int atual = inicio;
 		
-		while (esquerda <= meio && direita <=fim) {
-			if(populacao[auxiliar[esquerda]].getCusto() <= populacao[auxiliar[direita]].getCusto()){
+		while (esquerda <= meio && direita <=fim) { 
+			if(populacao[auxiliar[esquerda]].getDelay() < populacao[auxiliar[direita]].getDelay()){
 				solucoes_elite[atual] = auxiliar[esquerda];
 				esquerda++;
 				
-			}else{
+			}
+			else if(populacao[auxiliar[direita]].getDelay() < populacao[auxiliar[esquerda]].getDelay()){
 				solucoes_elite[atual] = auxiliar[direita];
 				direita++;
 			}
-			atual ++;		
+			else { // se os delays forem iguais, ordena por menor custo
+				if(populacao[auxiliar[esquerda]].getCusto() < populacao[auxiliar[direita]].getCusto()) {
+					solucoes_elite[atual] = auxiliar[esquerda];
+					esquerda++;
+				}
+				else {
+					solucoes_elite[atual] = auxiliar[direita];
+					direita++;
+				}
+			}
+			atual++;		
 		}
 		
 		int restante = meio - esquerda;
