@@ -135,4 +135,12 @@ public class Grafo {
 		return new Grafo(grafo.getArquivo());
 	}
 	
+	public Double soma_custos() {
+		Double soma = 0.0;
+		for(Vertice vertice : vertices) {
+			soma = soma + vertice.getCusto();			
+		}
+		return soma;
+	}
+	
 }

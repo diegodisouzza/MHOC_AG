@@ -57,7 +57,7 @@ public class AlgoritmoGenetico {
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
-			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
+			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
 			
 		}
 		
@@ -96,7 +96,7 @@ public class AlgoritmoGenetico {
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
-			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
+			FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
 		}
 		
 		FuncoesAuxiliares.escrever_saida();
@@ -132,7 +132,7 @@ public class AlgoritmoGenetico {
 		
 		System.out.println("[Tamanho] das soluções elite: "+this.e);
 		
-		this.limite_custo = limite_custo;
+		this.limite_custo = limite_custo * grafo.soma_custos();
 		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[this.n];
 		this.solucoes_elite = new Integer[this.e];

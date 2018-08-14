@@ -8,11 +8,10 @@ public class teste {
 	public static void main(String[] args) {
 		Grafo g = new Grafo("C:/Users/Diego Souza/Documents/UFRJ/2º período/Metaheurísticas em otimização combinatória (MHOC)/Trabalho final/Instâncias do trabalho prático/D57.in");
 	
-		Integer rodadas = 0;
-		while(rodadas < 10) {
-			System.out.println("\n--------------Rodada: "+rodadas+1+" -----------------\n");
+		Integer contador = 0;
+		while(contador < 10) {
 			AlgoritmoGenetico ag = new AlgoritmoGenetico(g, 25.0,"11001");
-			rodadas++;
+			contador++;
 		}
 
 //		Individuo i = new Individuo("01011",g);
