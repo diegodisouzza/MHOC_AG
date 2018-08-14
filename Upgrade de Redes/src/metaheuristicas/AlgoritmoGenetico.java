@@ -37,11 +37,14 @@ public class AlgoritmoGenetico {
 		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
-		Double tempo_anterior = (double) System.currentTimeMillis()/1000;
-		Double tempo_atual;
-		Double intervalo;
+		Double tempo_anterior = (double) System.currentTimeMillis();
+		Double tempo_atual = (double) System.currentTimeMillis();
+		Double intervalo = tempo_atual-tempo_anterior;
+		tempo_anterior = tempo_atual;
 		
 		gerar_populacao_inicial();
+		
+		FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
 		
 		while(geracoes_sem_melhoria < 10) {
 			
@@ -76,11 +79,14 @@ public class AlgoritmoGenetico {
 		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
-		Double tempo_anterior = (double) System.currentTimeMillis()/1000;
-		Double tempo_atual;
-		Double intervalo;
+		Double tempo_anterior = (double) System.currentTimeMillis();
+		Double tempo_atual = (double) System.currentTimeMillis();
+		Double intervalo = tempo_atual-tempo_anterior;
+		tempo_anterior = tempo_atual;
 		
-		gerar_populacao_inicial(); // podemos fazer um método guloso
+		gerar_populacao_inicial();
+		
+		FuncoesAuxiliares.conteudo_saida(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, this.melhor_solucao_elite.getId(), this.melhor_solucao_elite.getDelay(), this.melhor_solucao_elite.getCusto(), intervalo);
 		
 		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo) && num_geracoes < NUM_MAX_GERACOES) {
 			
@@ -92,7 +98,7 @@ public class AlgoritmoGenetico {
 							
 			selecionar_solucoes_elite();
 			
-			tempo_atual = (double) System.currentTimeMillis()/1000;
+			tempo_atual = (double) System.currentTimeMillis();
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
@@ -133,6 +139,8 @@ public class AlgoritmoGenetico {
 		System.out.println("[Tamanho] das soluções elite: "+this.e);
 		
 		this.limite_custo = limite_custo * grafo.soma_custos();
+		System.out.println("soma custos "+grafo.soma_custos());
+		System.out.println("limite "+this.limite_custo);
 		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[this.n];
 		this.solucoes_elite = new Integer[this.e];
