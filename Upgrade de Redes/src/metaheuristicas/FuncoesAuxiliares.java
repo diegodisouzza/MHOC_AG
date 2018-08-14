@@ -131,7 +131,7 @@ public class FuncoesAuxiliares {
 	public static void conteudo_saida(Integer geracao, Integer cruzamentos, Integer mutacoes, Integer populacao, Integer populacao_n, Integer solucoes_elite, 
 			Double percentual_custo, String melhor_solucao, Double melhor_delay, Double melhor_custo, Double tempo){
 		conteudo = conteudo + geracao +" "+cruzamentos+" "+mutacoes+" "+populacao+" "+populacao_n+"	"+solucoes_elite+" "
-			+percentual_custo+melhor_solucao+" "+melhor_delay+" "+melhor_custo+" "+tempo +"\n"; 		
+			+percentual_custo+" "+melhor_solucao+" "+melhor_delay+" "+melhor_custo+" "+tempo +"\n"; 		
 	}
 	
 	public static void escrever_saida() {
