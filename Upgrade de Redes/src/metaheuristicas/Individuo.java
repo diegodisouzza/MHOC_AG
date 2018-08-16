@@ -123,5 +123,14 @@ public class Individuo {
 		return id;
 		
 	}
+
+	public boolean melhor_que(Individuo individuo) {
+		if(this.getDelay() < individuo.getDelay() || (this.getDelay() == individuo.getDelay() && this.getCusto() < individuo.getCusto())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 }

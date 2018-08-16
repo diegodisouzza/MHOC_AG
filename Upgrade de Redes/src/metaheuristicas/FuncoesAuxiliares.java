@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 /**
  * Universidade Federal do Rio de Janeiro - COPPE - PESC
  * Metaheuristicas em Otimização Combinatória 2018.2
@@ -14,22 +16,27 @@ import java.io.IOException;
 
 public class FuncoesAuxiliares {
 	
-	private static FileWriter fw;
-	private static BufferedWriter bw;
-	private static String conteudo;
+	private static FileWriter fw_ag;
+	private static BufferedWriter bw_ag;
+	private static FileWriter fw_pr;
+	private static BufferedWriter bw_pr;
+	private static String conteudo_ag;
+	private static String conteudo_pr;
 	private static Integer rodada = 0;
+	private static String caminho_instancia;
 	
 	public static void init(String caminho) {
+		caminho_instancia = caminho;
 		rodada++;
-		String arquivo = caminho.replace(".in", " - solucao "+rodada+".txt");
+		String arquivo_ag = caminho.replace(".in", " - GANU - rodada "+rodada+".txt");
 		try{
-			fw = new FileWriter(arquivo);
-			bw = new BufferedWriter(fw);
+			fw_ag = new FileWriter(arquivo_ag);
+			bw_ag = new BufferedWriter(fw_ag);
 		}
 		catch(IOException e) {
 			System.out.println("Erro na abertura do arquivo de saída");
 		}
-		conteudo = "geracao cruzamentos mutacoes populacao populacao_n solucoes_elite percentual_custo melhoria melhor_delay melhor_custo tempo\n";
+		conteudo_ag = "geracao cruzamentos mutacoes populacao populacao_n solucoes_elite percentual_custo melhoria melhor_delay melhor_custo tempo\n";
 	}
 
 	public static void mergeSort_populacao(Individuo populacao[], int inicio, int fim){
@@ -128,18 +135,43 @@ public class FuncoesAuxiliares {
 		}
 	}
 	
-	public static void conteudo_saida(Integer geracao, Integer cruzamentos, Integer mutacoes, Integer populacao, Integer populacao_n, Integer solucoes_elite, 
+	public static void conteudo_saida_ag(Integer geracao, Integer cruzamentos, Integer mutacoes, Integer populacao, Integer populacao_n, Integer solucoes_elite, 
 			Double percentual_custo, String melhor_solucao, Double melhor_delay, Double melhor_custo, Double tempo){
-		conteudo = conteudo + geracao +" "+cruzamentos+" "+mutacoes+" "+populacao+" "+populacao_n+"	"+solucoes_elite+" "
+		conteudo_ag = conteudo_ag + geracao +" "+cruzamentos+" "+mutacoes+" "+populacao+" "+populacao_n+"	"+solucoes_elite+" "
 			+percentual_custo+" "+melhor_solucao+" "+melhor_delay+" "+melhor_custo+" "+tempo +"\n"; 		
 	}
 	
-	public static void escrever_saida() {
+	public static void escrever_saida_ag() {
 		try {
-			bw.write(conteudo);
-			bw.flush();
+			bw_ag.write(conteudo_ag);
+			bw_ag.flush();
 		} catch (IOException e) {
-			System.out.println("Erro na escrita do arquivo de saída");
+			System.out.println("Erro na escrita do arquivo de saída do algoritmo genético");
+			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo de saída do algoritmo genético", "Erro!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void escrever_saida_pr(Individuo novas_solucoes[]) {
+		String arquivo_pr = caminho_instancia.replace(".in", " - PR - rodada "+rodada+".txt");
+		conteudo_pr = "nova_solucao delay custo\n";
+		for (int i = 0; i < novas_solucoes.length; i++) {
+			if(novas_solucoes[i] != null) {
+				conteudo_pr = conteudo_pr+novas_solucoes[i].getId()+" "+novas_solucoes[i].getDelay()+" "+novas_solucoes[i].getCusto()+"\n";
+			}
+			else {
+				break;
+			}
+		}
+		
+		try {
+			fw_pr = new FileWriter(arquivo_pr);
+			bw_pr = new BufferedWriter(fw_pr);
+			
+			bw_pr.write(conteudo_pr);
+			bw_pr.flush();
+		} catch (IOException e) {
+			System.out.println("Erro na escrita do arquivo de saída do path relinking");
+			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo de saída do path relinking", "Erro!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

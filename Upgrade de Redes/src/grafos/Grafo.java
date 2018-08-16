@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 public class Grafo {
 
 	private FileReader fr;
@@ -55,6 +57,8 @@ public class Grafo {
 			}
 		} catch (IOException e) {
 			System.out.println("Erro de leitura do arquivo de instância do grafo");
+			JOptionPane.showMessageDialog(null, "Erro de leitura do arquivo de instância do grafo\n"
+					+ "Verifique se o caminho está correto", "Erro!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

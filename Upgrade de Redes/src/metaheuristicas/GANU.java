@@ -13,7 +13,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ import grafos.Grafo;
 
 public class GANU extends JFrame implements ActionListener{
 
+	private static final long serialVersionUID = 1L;
 	JFrame janela = new JFrame("GANU: a Genetic Algorithm for the Network Upgrade problem");
 	JPanel painel = new JPanel();
 	JLabel ganu = new JLabel("GANU");
@@ -214,12 +214,14 @@ public class GANU extends JFrame implements ActionListener{
 					while(contador < execucoes) {
 						AlgoritmoGenetico ag = new AlgoritmoGenetico(g, percentual_custo, otimo);
 						contador++;
+						ag.toString();
 					}
 				}
 				else {
 					while(contador < execucoes) {
 						AlgoritmoGenetico ag = new AlgoritmoGenetico(g, percentual_custo);
 						contador++;
+						ag.toString();
 					}
 				}
 				JOptionPane.showMessageDialog(null, "Fim do processamento!\nArquivos de saída gerados no mesmo diretório da instância", 
