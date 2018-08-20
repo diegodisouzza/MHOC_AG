@@ -9,6 +9,8 @@ public class PathRelinking {
 		Individuo novas_solucoes[] = new Individuo[populacao.length];
 		Integer num_novas_solucoes = 0;
 		Boolean melhoria = false;
+
+		Double tempo_anterior = (double) System.currentTimeMillis();
 		
 		for (int i = 0; i < solucoes_elite.length - 1; i++) {
 			String inicial = populacao[solucoes_elite[i]].getId();
@@ -48,18 +50,23 @@ public class PathRelinking {
 				}
 			}
 		}
+		
+		Double tempo_atual = (double) System.currentTimeMillis();
+		Double intervalo = tempo_atual-tempo_anterior;
+		tempo_anterior = tempo_atual;
+		
 		if(melhoria) {
-			FuncoesAuxiliares.escrever_saida_pr(novas_solucoes);
+			FuncoesAuxiliares.escrever_saida_pr(novas_solucoes, intervalo);
 		}
 	}
 	
 	private static Boolean checar_viabilidade(Individuo individuo, Double limite_custo) { 
 		if(individuo.getCusto() <= limite_custo) {
-			System.out.println("[Viabilidade] no individuo ["+individuo.getId()+"]");
+			System.out.println("[Viabilidade no PR] no individuo ["+individuo.getId()+"]");
 			return true;
 		}
 		else {
-			System.out.println("[Inviabilidade] no individuo ["+individuo.getId()+"]");
+			System.out.println("[Inviabilidade no PR] no individuo ["+individuo.getId()+"]");
 			return false;
 		}
 	}

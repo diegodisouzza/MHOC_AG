@@ -151,12 +151,12 @@ public class FuncoesAuxiliares {
 		}
 	}
 	
-	public static void escrever_saida_pr(Individuo novas_solucoes[]) {
+	public static void escrever_saida_pr(Individuo novas_solucoes[], Double tempo) {
 		String arquivo_pr = caminho_instancia.replace(".in", " - PR - rodada "+rodada+".txt");
-		conteudo_pr = "nova_solucao delay custo\n";
+		conteudo_pr = "nova_solucao delay custo tempo\n";
 		for (int i = 0; i < novas_solucoes.length; i++) {
 			if(novas_solucoes[i] != null) {
-				conteudo_pr = conteudo_pr+novas_solucoes[i].getId()+" "+novas_solucoes[i].getDelay()+" "+novas_solucoes[i].getCusto()+"\n";
+				conteudo_pr = conteudo_pr+novas_solucoes[i].getId()+" "+novas_solucoes[i].getDelay()+" "+novas_solucoes[i].getCusto()+" "+tempo+"\n";
 			}
 			else {
 				break;

@@ -38,11 +38,12 @@ public class AlgoritmoGenetico {
 		
 		Integer num_geracoes = 0;
 		Double tempo_anterior = (double) System.currentTimeMillis();
+				
+		gerar_populacao_inicial();
+		
 		Double tempo_atual = (double) System.currentTimeMillis();
 		Double intervalo = tempo_atual-tempo_anterior;
 		tempo_anterior = tempo_atual;
-		
-		gerar_populacao_inicial();
 		
 		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
@@ -56,7 +57,7 @@ public class AlgoritmoGenetico {
 							
 			selecionar_solucoes_elite();
 			
-			tempo_atual = (double) System.currentTimeMillis()/1000;
+			tempo_atual = (double) System.currentTimeMillis();
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
@@ -82,11 +83,12 @@ public class AlgoritmoGenetico {
 		
 		Integer num_geracoes = 0;
 		Double tempo_anterior = (double) System.currentTimeMillis();
+		
+		gerar_populacao_inicial();
+		
 		Double tempo_atual = (double) System.currentTimeMillis();
 		Double intervalo = tempo_atual-tempo_anterior;
 		tempo_anterior = tempo_atual;
-		
-		gerar_populacao_inicial();
 		
 		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
