@@ -25,6 +25,7 @@ public class AlgoritmoGenetico {
 	private Double prob_mutacao = 0.2;
 	private Integer geracoes_sem_melhoria = 0;
 	private final Integer NUM_MAX_GERACOES = 500;
+	private final Integer GERACOES_SEM_MELHORIA = 50;
 	private Individuo melhor_solucao_elite = null;
 	private Individuo pior_solucao_elite = null;
 	private Integer num_cruzamentos = 0, num_mutacoes = 0;
@@ -47,7 +48,7 @@ public class AlgoritmoGenetico {
 		
 		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
-		while(geracoes_sem_melhoria < 10) {
+		while(geracoes_sem_melhoria < GERACOES_SEM_MELHORIA) {
 			
 			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
