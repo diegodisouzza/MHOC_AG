@@ -91,7 +91,8 @@ public class Grafo {
 	}
 	
 	private void instanciarCustos(String info[], Integer contador) {
-		vertices[contador].setCusto(Double.parseDouble(info[0]));
+		if(contador < total_vertices)
+			vertices[contador].setCusto(Double.parseDouble(info[0]));
 	}
 	
 	public void upgrade(String vertice) {

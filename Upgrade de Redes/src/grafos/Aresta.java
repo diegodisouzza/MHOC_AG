@@ -70,4 +70,9 @@ public class Aresta {
 		else if(this.vertice_1.getUpgrade() && this.getVertice_2().getUpgrade() && this.pesos.size() == 2)
 			pesos.poll();
 	}	
+	
+	@Override
+	public String toString() {
+		return vertice_1 + " - " + vertice_2;
+	}
 }
