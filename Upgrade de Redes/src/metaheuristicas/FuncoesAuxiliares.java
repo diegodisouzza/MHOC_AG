@@ -25,6 +25,10 @@ public class FuncoesAuxiliares {
 	private static Integer rodada = 0;
 	private static String caminho_instancia;
 	
+	public static void setRodada(Integer r) {
+		rodada = r;
+	}
+	
 	public static void init(String caminho) {
 		caminho_instancia = caminho;
 		rodada++;

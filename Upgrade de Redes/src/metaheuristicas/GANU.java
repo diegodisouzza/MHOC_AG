@@ -230,6 +230,7 @@ public class GANU extends JFrame implements ActionListener{
 			else {
 				JOptionPane.showMessageDialog(null, "Um caminho válido precisa ser informado", "Erro!", JOptionPane.ERROR_MESSAGE);
 			}
+			FuncoesAuxiliares.setRodada(0);
 			executar.setEnabled(true);
 		}
 	}
