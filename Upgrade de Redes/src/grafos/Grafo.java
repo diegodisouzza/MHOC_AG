@@ -148,4 +148,12 @@ public class Grafo {
 		return soma;
 	}
 	
+	public Double soma_delays() {
+		Double soma = 0.0;
+		for(Aresta aresta : arestas) {
+			soma = soma + aresta.getPeso();			
+		}
+		return soma;
+	}
+	
 }

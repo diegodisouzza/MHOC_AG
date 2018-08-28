@@ -146,7 +146,8 @@ public class AlgoritmoGenetico {
 		System.out.println("[Tamanho] das soluções elite: "+this.e);
 		
 		this.limite_custo = limite_custo * grafo.soma_custos();
-		System.out.println("[Budget] "+this.limite_custo * grafo.soma_custos());
+		System.out.println("[Custos total] ("+grafo.soma_custos()+") * [Percentual] ("
+				+limite_custo+" = [Budget] ("+this.limite_custo+")");
 		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[this.n];
 		this.solucoes_elite = new Integer[this.e];
