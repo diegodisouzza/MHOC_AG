@@ -13,11 +13,11 @@ import grafos.Grafo;
 
 public class AlgoritmoGenetico {
 	
-	private Grafo grafo;
+	private static Grafo grafo;
 	private Integer p; //tamanho da população
 	private Integer n; //número de individuos gerados por cruzamento+mutação
 	private Integer e; //tamanho do vetor de soluções elite
-	private Double limite_custo; //B
+	private static Double budget; //B
 	private Individuo populacao [];
 	private Individuo populacao_n []; // quantos novos individuos serão gerados?
 	private Integer solucoes_elite []; // quantas soluções elite manteremos para o path relinking?
@@ -30,23 +30,23 @@ public class AlgoritmoGenetico {
 	private Individuo pior_solucao_elite = null;
 	private Integer num_cruzamentos = 0, num_mutacoes = 0;
 	
-	public AlgoritmoGenetico(Grafo grafo, Double limite_custo) {
+	public AlgoritmoGenetico(Grafo grafo, Double percentual) {
 		
 		System.out.println("Executando GANU... \nCritério de parada: nº de iterações em melhoria \n");
 		
-		init(grafo, limite_custo);
+		init(grafo, percentual);
 		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
 		Double tempo_anterior = (double) System.currentTimeMillis();
 				
-		gerar_populacao_inicial();
+		gerar_populacao_inicial(percentual);
 		
 		Double tempo_atual = (double) System.currentTimeMillis();
 		Double intervalo = tempo_atual-tempo_anterior;
 		tempo_anterior = tempo_atual;
 		
-		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
+		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, percentual, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
 		while(geracoes_sem_melhoria < GERACOES_SEM_MELHORIA) {
 			
@@ -62,36 +62,36 @@ public class AlgoritmoGenetico {
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
-			FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
+			FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, percentual, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 			
 		}
 		
 		FuncoesAuxiliares.escrever_saida_ag();
 		
-		PathRelinking.executar(populacao, solucoes_elite, grafo, limite_custo);
+		PathRelinking.executar(populacao, solucoes_elite, grafo, percentual);
 		
 		System.out.println("Número de gerações: "+num_geracoes+", melhor solução encontrada "+melhor_solucao_elite.getId() 
 			+ " delay: "+melhor_solucao_elite.getDelay()+" custo: "+melhor_solucao_elite.getCusto());
 	
 	}
 	
-	public AlgoritmoGenetico(Grafo grafo, Double limite_custo, String id_individuo_otimo) {
+	public AlgoritmoGenetico(Grafo grafo, Double percentual, String id_individuo_otimo) {
 		
 		System.out.println("Executando GANU... \nCritério de parada: ótimo conhecido ("+id_individuo_otimo+") \n");
 		
-		init(grafo, limite_custo);
+		init(grafo, percentual);
 		FuncoesAuxiliares.init(grafo.getArquivo());
 		
 		Integer num_geracoes = 0;
 		Double tempo_anterior = (double) System.currentTimeMillis();
 		
-		gerar_populacao_inicial();
+		gerar_populacao_inicial(percentual);
 		
 		Double tempo_atual = (double) System.currentTimeMillis();
 		Double intervalo = tempo_atual-tempo_anterior;
 		tempo_anterior = tempo_atual;
 		
-		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
+		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, percentual, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
 		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo) && num_geracoes < NUM_MAX_GERACOES) {
 			
@@ -107,27 +107,27 @@ public class AlgoritmoGenetico {
 			intervalo = tempo_atual-tempo_anterior;
 			tempo_anterior = tempo_atual;
 			
-			FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, limite_custo, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
+			FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, percentual, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		}
 		
 		FuncoesAuxiliares.escrever_saida_ag();
 		
-		PathRelinking.executar(populacao, solucoes_elite, grafo, limite_custo);
+		PathRelinking.executar(populacao, solucoes_elite, grafo, percentual);
 		
 		System.out.println("Número de gerações: "+num_geracoes+", melhor solução encontrada "+melhor_solucao_elite.getId() 
 		+ " delay: "+melhor_solucao_elite.getDelay()+" custo: "+melhor_solucao_elite.getCusto());
 		
 	}
 	
-	private void init(Grafo grafo, Double limite_custo) {
-		this.grafo = grafo;
+	private void init(Grafo g, Double limite_custo) {
+		grafo = g;
 		
-		if(this.grafo.getTotal_vertices() >= 10) { // limita o tamanho da populacao a 100 caso o numero de vertices seja maior que 10
+		if(grafo.getTotal_vertices() >= 10) { // limita o tamanho da populacao a 100 caso o numero de vertices seja maior que 10
 			this.p = 100;
 		}
 		else { // calcula o tamanho da populacao em funcao do numero de vertices
-			Double num_vertices = Double.parseDouble(String.valueOf(this.grafo.getTotal_vertices()));
-			this.p = (int) Math.pow(2.0, num_vertices) / this.grafo.getTotal_vertices(); // p = (2^total_vertices)/total_vertices
+			Double num_vertices = Double.parseDouble(String.valueOf(grafo.getTotal_vertices()));
+			this.p = (int) Math.pow(2.0, num_vertices) / grafo.getTotal_vertices(); // p = (2^total_vertices)/total_vertices
 		}
 		
 		System.out.println("[Tamanho] da população: "+this.p);
@@ -145,33 +145,30 @@ public class AlgoritmoGenetico {
 		
 		System.out.println("[Tamanho] das soluções elite: "+this.e);
 		
-		this.limite_custo = limite_custo * grafo.soma_custos();
-		System.out.println("[Custos total] ("+grafo.soma_custos()+") * [Percentual] ("
-				+limite_custo+" = [Budget] ("+this.limite_custo+")");
+		budget = limite_custo * g.soma_custos();
+		System.out.println("[Custos total] ("+g.soma_custos()+") * [Percentual] ("
+				+limite_custo+") = [Budget] ("+budget+")");
 		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[this.n];
 		this.solucoes_elite = new Integer[this.e];
-		melhor_solucao_elite = new Individuo("", grafo);
-		pior_solucao_elite = new Individuo("", grafo);
+		melhor_solucao_elite = new Individuo();
+		pior_solucao_elite = new Individuo();
 		
-		melhor_solucao_elite.setCusto(Double.MAX_VALUE);
-		pior_solucao_elite.setCusto(Double.MAX_VALUE);
 	}
 	
 
-	private void gerar_populacao_inicial() {
-		
+	private void gerar_populacao_inicial(Double percentual_upgrade) {
+				
 		Integer individuos_gerados = 0;
 		
 		System.out.println("\nGerando população inicial...");
 		
 		while(individuos_gerados < this.p) {
 			
-			Individuo novo_individuo = novo_individuo();
+			Individuo novo_individuo = novo_individuo(percentual_upgrade);
 			
-			if(checar_viabilidade(novo_individuo)) {
-				populacao[individuos_gerados++] = novo_individuo;
-			}
+			populacao[individuos_gerados++] = individuo_viavel(novo_individuo);
+			
 		}
 		
 		System.out.println("População inicial: "+imprime_populacao_generica(populacao));
@@ -180,18 +177,27 @@ public class AlgoritmoGenetico {
 	}
 	
 
-	private Individuo novo_individuo() {
+	private Individuo novo_individuo(Double percentual_upgrade) {
+		
+		Integer num_upgrades = (int) (percentual_upgrade * grafo.getTotal_vertices());
 		
 		String id = new String();
 		
-		for (int i = 0; i < this.grafo.getTotal_vertices(); i++) {
-			
-			id = id + new Random().nextInt(2);
-			
+		Integer contador_upgrades = 0;
+		
+		for (int i = 0; i < grafo.getTotal_vertices(); i++) {
+			id = id + "0";
+		}
+		
+		while(contador_upgrades <= num_upgrades) {
+			Integer posicao = new Random().nextInt(grafo.getTotal_vertices());
+			if(id.charAt(posicao) == '0'){
+				id = id.substring(0, posicao) + "1" + id.substring(posicao+1, id.length());
+				contador_upgrades++;
+			}
 		}
 		
 		Individuo individuo = new Individuo(id, grafo);
-		
 		return individuo;
 	}
 	
@@ -265,24 +271,20 @@ public class AlgoritmoGenetico {
 		
 		System.out.println("Filhos: ["+filho_1.getId()+"] e ["+filho_2.getId()+"]");
 		
-		if(checar_viabilidade(filho_1)) {
-			try{
+		try{
 			
-				populacao_n[novos_individuos++] = filho_1;
-				
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("Inserção do individuo ["+filho_1.getId()+"] gerado por cruzamento excede limite");
-			}
+			populacao_n[novos_individuos++] = individuo_viavel(filho_1);
+			
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Inserção do individuo ["+filho_1.getId()+"] gerado por cruzamento excede limite");
 		}
 		
-		if(checar_viabilidade(filho_2)) {
-			try{
-				
-				populacao_n[novos_individuos++] = filho_2;
-				
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("Inserção do individuo ["+filho_2.getId()+"] gerado por cruzamento excede limite");
-			}
+		try{
+			
+			populacao_n[novos_individuos++] = individuo_viavel(filho_2);
+			
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Inserção do individuo ["+filho_2.getId()+"] gerado por cruzamento excede limite");
 		}
 		
 		return novos_individuos;
@@ -290,52 +292,48 @@ public class AlgoritmoGenetico {
 	
 	private Integer mutacao(Integer novos_individuos) {
 		
-		Integer rand_mutacao = new Random().nextInt(grafo.getTotal_vertices());
 		Integer rand_individuo = new Random().nextInt(p);
-		
 		Individuo individuo = populacao[rand_individuo];
 		
 		System.out.println("[Mutação] no individuo ["+individuo.getId()+"]");
 		
+		Integer rand_mutacao = new Random().nextInt(grafo.getTotal_vertices());
 		Character alelo_x = individuo.getId().charAt(rand_mutacao);
-		Character alelo_y = null;
 		
-		if(alelo_x.equals('0')) {
-			alelo_y = '1';
+		while(!alelo_x.equals('0')) {
+			rand_mutacao = new Random().nextInt(grafo.getTotal_vertices());
+			alelo_x = individuo.getId().charAt(rand_mutacao);
 		}
-		else {
-			alelo_y = '0';
-		}
-		
-		String id_mutante = individuo.getId().substring(0, rand_mutacao) + alelo_y
+	
+		String id_mutante = individuo.getId().substring(0, rand_mutacao) + "1"
 				+ individuo.getId().substring(rand_mutacao+1, grafo.getTotal_vertices());
 		
 		Individuo mutante = new Individuo(id_mutante, grafo);
 		
 		System.out.println("Mutante: ["+mutante.getId()+"]");
 		
-		if(checar_viabilidade(mutante)) {
-			try{
+		try{
 				
-				populacao_n[novos_individuos++] = mutante;
+			populacao_n[novos_individuos++] = individuo_viavel(mutante);
 				
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("Inserção do individuo ["+mutante.getId()+"] gerado por mutação excede limite");
-			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Inserção do individuo ["+mutante.getId()+"] gerado por mutação excede limite");
 		}
+		
 		
 		return novos_individuos;
 	}
 	
-	private Boolean checar_viabilidade(Individuo individuo) {
-		if(individuo.getCusto() <= this.limite_custo) {
-			System.out.println("[Viabilidade] no individuo ["+individuo.getId()+"]");
-			return true;
+	private Individuo individuo_viavel(Individuo individuo) {
+		
+		while(individuo.getCusto() > budget) {
+			String id_viavel = individuo.getId().replaceFirst("1", "0");
+			individuo.setCusto(id_viavel, grafo);
 		}
-		else {
-			System.out.println("[Inviabilidade] no individuo ["+individuo.getId()+"]");
-			return false;
-		}
+		
+		System.out.println("[Indivíduo viável] "+individuo.getId());
+		
+		return individuo;
 	}
 	
 	private void atualizar_populacao_p() {
@@ -520,6 +518,14 @@ public class AlgoritmoGenetico {
 			ids = ids + populacao_generica[i].getId() + " ";
 		}
 		return ids;
-	}	
+	}
+	
+	public static Double getBudget() {
+		return budget;
+	}
+	
+	public static Grafo getGrafo() {
+		return grafo;
+	}
 	
 }

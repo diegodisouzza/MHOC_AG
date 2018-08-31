@@ -37,7 +37,8 @@ public class GANU extends JFrame implements ActionListener{
 	JLabel cabecalho_2 = new JLabel("Alunos: Caroline Lima, Cláudio Diego Souza, José Waldomiro Sinico");
 	JLabel cabecalho_3 = new JLabel("O GANU executará até:");
 	JLabel cabecalho_4 = new JLabel("I. a solução ótima ser encontrada; ou");
-	JLabel cabecalho_5 = new JLabel("II. o número máximo de gerações ser atingido (500)");
+	JLabel cabecalho_5 = new JLabel("II. o número máximo de gerações ser atingido (500); ou");
+	JLabel cabecalho_6 = new JLabel("III. o número máximo de gerações sem melhoria ser atingido (50)");
 	JLabel label_arquivo = new JLabel("Digite o caminho do arquivo (instância)*: ");
 	JLabel label_limite_custo = new JLabel("Defina o limite de custo (budget)*: ");
 	JLabel label_rodadas = new JLabel("Defina o número de rodadas do GANU*: ");
@@ -120,6 +121,9 @@ public class GANU extends JFrame implements ActionListener{
 		cabecalho_5.setFont(new Font("TimesRoman", Font.PLAIN, 13));
 		cabecalho_5.setBounds(10, 290, 450, 20);
 		
+		cabecalho_6.setFont(new Font("TimesRoman", Font.PLAIN, 13));
+		cabecalho_6.setBounds(10, 310, 450, 20);
+		
 		executar.setFont(new Font("TimesRoman", Font.BOLD, 20));
 		executar.setBounds(janela.getWidth() - 220, 270, 200, 50);
 		
@@ -139,6 +143,7 @@ public class GANU extends JFrame implements ActionListener{
 		painel.add(cabecalho_3);
 		painel.add(cabecalho_4);
 		painel.add(cabecalho_5);
+		painel.add(cabecalho_6);
 		painel.add(executar);
 		janela.add(painel);
 		

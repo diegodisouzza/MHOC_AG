@@ -10,6 +10,8 @@ package grafos;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -22,7 +24,7 @@ public class Grafo {
 	private Integer total_arestas;
 	
 	private Vertice vertices [];
-	private Aresta arestas [];
+	private List<Aresta> arestas;
 	
 	private String arquivo = new String();
 	
@@ -40,15 +42,15 @@ public class Grafo {
 			this.total_arestas = Integer.parseInt(linha.split(" ")[1]);
 			
 			vertices =  new Vertice[this.total_vertices];
-			arestas = new Aresta[this.total_arestas];
+			arestas = new ArrayList<Aresta>(this.total_arestas);
 			
 			linha = br.readLine();
-			Integer contador_arestas = 0, contador_custos = 0;;
+			Integer contador_custos = 0;;
 
 			while(linha != null) {
 				String info [] = linha.split(" ");
 				if(info.length > 1) {
-					this.instanciarGrafo(info, contador_arestas++);
+					this.instanciarGrafo(info);
 				}
 				else {
 					this.instanciarCustos(info, contador_custos++);
@@ -62,7 +64,7 @@ public class Grafo {
 		}
 	}
 	
-	private void instanciarGrafo(String info[], Integer contador) {
+	private void instanciarGrafo(String info[]) {
 		Integer v_1 = Integer.parseInt(info[0]), v_2 = Integer.parseInt(info[1]);
 		Vertice vertice_1, vertice_2;
 		
@@ -87,7 +89,7 @@ public class Grafo {
 		Double peso_3 = Double.parseDouble(info[4]);
 		
 		Aresta aresta = new Aresta(vertice_1, vertice_2, peso_1, peso_2, peso_3);
-		this.arestas[contador] = aresta;
+		arestas.add(aresta);
 	}
 	
 	private void instanciarCustos(String info[], Integer contador) {
@@ -95,16 +97,27 @@ public class Grafo {
 			vertices[contador].setCusto(Double.parseDouble(info[0]));
 	}
 	
-	public void upgrade(String vertice) {
+	public void upgrade(Integer vertice) {
 		for (Aresta aresta: arestas) {
-			if(aresta.getVertice_1().toString().equals(vertice)) {
+			if(aresta.getVertice_1().getId() == vertice) {
 				aresta.upgrade(vertice);
 			}
-			else if(aresta.getVertice_2().toString().equals(vertice)) {
+			else if(aresta.getVertice_2().getId() == vertice) {
 				aresta.upgrade(vertice);
 			}
 		}
 		setCusto(vertice);
+	}
+	
+	public void upgrade(String representacao) {
+		String nos [] = representacao.split("");
+		
+		for(int i = 0; i < nos.length; i++) {
+			
+			if(nos[i].equals("1")){
+				this.upgrade(i);
+			}
+		}
 	}
 	
 	public Integer getTotal_vertices() {
@@ -119,7 +132,7 @@ public class Grafo {
 		return vertices;
 	}
 
-	public Aresta[] getArestas() {
+	public List<Aresta> getArestas() {
 		return arestas;
 	}
 
@@ -131,9 +144,8 @@ public class Grafo {
 		return arquivo;
 	}
 
-	private void setCusto(String vertice) {
-		Integer v = Integer.parseInt(vertice);
-		this.custo = this.custo + vertices[v].getCusto();
+	private void setCusto(Integer vertice) {
+		this.custo = this.custo + vertices[vertice].getCusto();
 	}
 	
 	public static Grafo replica(Grafo grafo) {
@@ -151,7 +163,7 @@ public class Grafo {
 	public Double soma_delays() {
 		Double soma = 0.0;
 		for(Aresta aresta : arestas) {
-			soma = soma + aresta.getPeso();			
+			soma = soma + aresta.getDelay();			
 		}
 		return soma;
 	}

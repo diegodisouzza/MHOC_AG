@@ -10,19 +10,19 @@ package grafos;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class Aresta {
+public class Aresta implements Comparable<Aresta>{
 	
 	private Vertice vertice_1;
 	private Vertice vertice_2;
-	private Queue<Double> pesos = new ArrayDeque<Double>(3);
+	private Queue<Double> delays = new ArrayDeque<Double>(3);
 	
 	public Aresta(Vertice vertice_1, Vertice vertice_2, Double peso_1, Double peso_2, Double peso_3) {
 		this.vertice_1 = vertice_1;
 		this.vertice_2 = vertice_2;
 		
-		this.pesos.add(peso_1);
-		this.pesos.add(peso_2);
-		this.pesos.add(peso_3);
+		this.delays.add(peso_1);
+		this.delays.add(peso_2);
+		this.delays.add(peso_3);
 	}
 	
 	public Vertice getVertice_1() {
@@ -41,38 +41,43 @@ public class Aresta {
 		this.vertice_2 = vertice_2;
 	}
 	
-	public Double getPeso() {
+	public Double getDelay() {
 		this.checkUpgrade();
-		return pesos.peek();
+		return delays.peek();
 	}
 	
-	public void upgrade(String vertice) {
-		if(this.vertice_1.toString().equals(vertice)) {
+	public void upgrade(Integer vertice) {
+		if(this.vertice_1.getId() == vertice) {
 			this.vertice_1.setUpgrade(true);
-			if((!this.vertice_2.getUpgrade() && this.pesos.size() == 3) 
-					|| (this.vertice_2.getUpgrade() && this.pesos.size() == 2)) {
-				pesos.poll();
+			if((!this.vertice_2.getUpgrade() && this.delays.size() == 3) 
+					|| (this.vertice_2.getUpgrade() && this.delays.size() == 2)) {
+				delays.poll();
 			}
-		} else if(this.vertice_2.toString().equals(vertice)) {
+		} else if(this.vertice_2.getId() == vertice) {
 			this.vertice_2.setUpgrade(true);
-			if((!this.vertice_1.getUpgrade() && this.pesos.size() == 3) 
-					|| (this.vertice_1.getUpgrade() && this.pesos.size() == 2)) {
-				pesos.poll();
+			if((!this.vertice_1.getUpgrade() && this.delays.size() == 3) 
+					|| (this.vertice_1.getUpgrade() && this.delays.size() == 2)) {
+				delays.poll();
 			}
 		}
 	}
 	
 	public void checkUpgrade() {
-		if(this.vertice_1.getUpgrade() && !this.getVertice_2().getUpgrade() && this.pesos.size() == 3)
-			pesos.poll();
-		else if(!this.vertice_1.getUpgrade() && this.getVertice_2().getUpgrade() && this.pesos.size() == 3)
-			pesos.poll();
-		else if(this.vertice_1.getUpgrade() && this.getVertice_2().getUpgrade() && this.pesos.size() == 2)
-			pesos.poll();
+		if(this.vertice_1.getUpgrade() && !this.getVertice_2().getUpgrade() && this.delays.size() == 3)
+			delays.poll();
+		else if(!this.vertice_1.getUpgrade() && this.getVertice_2().getUpgrade() && this.delays.size() == 3)
+			delays.poll();
+		else if(this.vertice_1.getUpgrade() && this.getVertice_2().getUpgrade() && this.delays.size() == 2)
+			delays.poll();
 	}	
 	
 	@Override
 	public String toString() {
 		return vertice_1 + " - " + vertice_2;
+	}
+
+	@Override
+	public int compareTo(Aresta aresta) {
+		return (int) (this.getDelay() - aresta.getDelay());
 	}
 }
