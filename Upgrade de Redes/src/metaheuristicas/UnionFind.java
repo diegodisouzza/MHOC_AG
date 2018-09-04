@@ -14,19 +14,19 @@ public class UnionFind {
 		}
 	}
 
-	public int encontra(int i) {
+	public Integer encontra(int index) {
 
-		int p = pais[i];
-		if (i == p) {
-			return i;
+		int p = pais[index];
+		if (index == p) {
+			return index;
 		}
-		return pais[i] = encontra(p);
+		return pais[index] = encontra(p);
 	}
 
-	public void uniao(int i, int j) {
+	public void uniao(int index_1, int index_2) {
 
-		int raiz1 = encontra(i);
-		int raiz2 = encontra(j);
+		int raiz1 = encontra(index_1);
+		int raiz2 = encontra(index_2);
 
 		if (raiz2 == raiz1)
 			return;

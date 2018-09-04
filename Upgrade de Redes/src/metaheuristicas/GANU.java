@@ -42,7 +42,7 @@ public class GANU extends JFrame implements ActionListener{
 	JLabel label_arquivo = new JLabel("Digite o caminho do arquivo (instância)*: ");
 	JLabel label_limite_custo = new JLabel("Defina o limite de custo (budget)*: ");
 	JLabel label_rodadas = new JLabel("Defina o número de rodadas do GANU*: ");
-	JLabel label_solucao_otima = new JLabel("Digite o identificador da solução ótima: ");
+	JLabel label_solucao_otima = new JLabel("Digite o delay da solução ótima: ");
 	JTextField caminho = new JTextField();
 	JTextField solucao_otima = new JTextField();
 	JComboBox<String> limite_custo = new JComboBox<String>();
@@ -160,7 +160,7 @@ public class GANU extends JFrame implements ActionListener{
 				
 				Double percentual_custo;
 				Integer execucoes, contador = 0;
-				String otimo = solucao_otima.getText();
+				Double otimo = Double.parseDouble(solucao_otima.getText());
 				switch(limite_custo.getSelectedIndex()){
 					case 0: {
 						percentual_custo = 0.1;

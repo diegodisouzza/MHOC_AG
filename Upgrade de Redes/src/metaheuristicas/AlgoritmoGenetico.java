@@ -75,9 +75,9 @@ public class AlgoritmoGenetico {
 	
 	}
 	
-	public AlgoritmoGenetico(Grafo grafo, Double percentual, String id_individuo_otimo) {
+	public AlgoritmoGenetico(Grafo grafo, Double percentual, Double delay_otimo) {
 		
-		System.out.println("Executando GANU... \nCritério de parada: ótimo conhecido ("+id_individuo_otimo+") \n");
+		System.out.println("Executando GANU... \nCritério de parada: ótimo conhecido ("+delay_otimo+") \n");
 		
 		init(grafo, percentual);
 		FuncoesAuxiliares.init(grafo.getArquivo());
@@ -93,7 +93,7 @@ public class AlgoritmoGenetico {
 		
 		FuncoesAuxiliares.conteudo_saida_ag(num_geracoes, num_cruzamentos, num_mutacoes, p, n, e, percentual, melhor_solucao_elite.getId(), melhor_solucao_elite.getDelay(), melhor_solucao_elite.getCusto(), intervalo);
 		
-		while(!melhor_solucao_elite.getId().equals(id_individuo_otimo) && num_geracoes < NUM_MAX_GERACOES) {
+		while(melhor_solucao_elite.getDelay() > delay_otimo && num_geracoes < NUM_MAX_GERACOES) {
 			
 			System.out.println("\nGeração corrente: " + ++num_geracoes + "\n");
 			
@@ -119,7 +119,7 @@ public class AlgoritmoGenetico {
 		
 	}
 	
-	private void init(Grafo g, Double limite_custo) {
+	private void init(Grafo g, Double percentual) {
 		grafo = g;
 		
 		if(grafo.getTotal_vertices() >= 10) { // limita o tamanho da populacao a 100 caso o numero de vertices seja maior que 10
@@ -145,9 +145,9 @@ public class AlgoritmoGenetico {
 		
 		System.out.println("[Tamanho] das soluções elite: "+this.e);
 		
-		budget = limite_custo * g.soma_custos();
+		budget = percentual * g.soma_custos();
 		System.out.println("[Custos total] ("+g.soma_custos()+") * [Percentual] ("
-				+limite_custo+") = [Budget] ("+budget+")");
+				+percentual+") = [Budget] ("+budget+")");
 		this.populacao = new Individuo[this.p];
 		this.populacao_n = new Individuo[this.n];
 		this.solucoes_elite = new Integer[this.e];
@@ -156,7 +156,6 @@ public class AlgoritmoGenetico {
 		
 	}
 	
-
 	private void gerar_populacao_inicial(Double percentual_upgrade) {
 				
 		Integer individuos_gerados = 0;
@@ -175,7 +174,6 @@ public class AlgoritmoGenetico {
 		
 		primeiro_conj_elite();
 	}
-	
 
 	private Individuo novo_individuo(Double percentual_upgrade) {
 		
@@ -403,7 +401,7 @@ public class AlgoritmoGenetico {
 		System.out.println("Nova população: "+imprime_populacao_generica(populacao));
 	}
 		
-	private void selecionar_solucoes_elite() { // [melhorar] a selecao precisa levar em conta o menor delay mas tambem o menor custo
+	private void selecionar_solucoes_elite() { 
 		
 		System.out.println("Atualizando soluções elite...");
 		System.out.println("Conjunto de soluções elite atual: "+imprime_solucoes_elite());

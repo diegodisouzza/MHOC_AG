@@ -50,13 +50,13 @@ public class Individuo {
 		}
 	}
 	
-	public void setCusto(String id, Grafo grafo) {
+	public void setCusto(String representacao, Grafo grafo) {
 		
-		this.id = id;
+		this.id = representacao;
 		
 		Grafo grafo_teste = Grafo.replica(grafo);
 		
-		grafo_teste.upgrade(id);
+		grafo_teste.upgrade(representacao);
 		
 		custo = grafo_teste.getCusto();
 		
